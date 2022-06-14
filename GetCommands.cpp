@@ -1,0 +1,168 @@
+#include "mainwindow.h"
+
+/**
+ * @brief
+ * Read data to a command that uses explorer.exe as launch vector
+ *
+ * Remaining data to read
+ * [STRING]         PARAM
+ * [STRING]         WEBSITE - IGNORED
+ *
+ * @param data      Stream of data being read
+ * @param c         Explorer command
+ */
+void readExplorerData(std::ifstream& data, Command* c, std::string& buf)
+{
+  std::getline(data, buf);
+  c->param = utf8_decode(buf); // PARAM
+}
+
+/**
+ * @brief
+ * Read data to a command that uses cmd.exe as launch vector
+ *
+ * Remaining data to read
+ * [STRING]         PARAM
+ * [STRING]         WEBSITE - IGNORED
+ *
+ * @param data      Stream of data being read
+ * @param c         Cmd command
+ */
+void readCmdData(std::ifstream& data, Command* c, std::string& buf)
+{
+    std::getline(data, buf);
+    c->param = utf8_decode(buf);
+}
+
+/**
+ * @brief
+ * Read data to a command that launches a website
+ *
+ * Remaining data to read
+ *
+ * [STRING]         PARAM - IGNORED
+ * [STRING]         WEBSITE
+ *
+ * @param data      Stream of data being read
+ * @param c         Command
+ */
+void readWebData(std::ifstream& data, Command* c, std::string& buf)
+{
+    data.ignore(); // IGNORE PARAM
+    std::getline(data, buf);
+    c->website = buf; // WEBSITE
+}
+
+
+/**
+ * @brief
+ * Returns a list of all available commands
+ *
+ * FILE STRUCTURE
+ *
+ * [INT]        COMMAND TYPE
+ * [STRING]     ICON
+ * [STRING]     NAME
+ * [STRING]     PARAM
+ * [STRING]     WEBSITE
+ *
+ * Each command requires different information
+ *
+ * @return std::vector<Command>     List of commands
+ */
+void MainWindow::getCommands()
+{
+  namespace fs = std::filesystem;
+
+  // Again, just for testing
+//  for (Command* c : commands)
+//  {
+//      delete c;
+//  }
+//  commands.clear();
+
+
+
+
+
+
+  LPWSTR path = NULL;
+
+  // Result of folder path, 0 if no err
+  HRESULT hr = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &path);
+
+  if (!SUCCEEDED(hr))
+  {
+      QMessageBox warn;
+      warn.setText("Catastrophic failure failed to locate appdata");
+      warn.exec();
+      return;
+  }
+
+  CoTaskMemFree(path);
+
+  std::string workablePath = utf8_encode(path);
+  workablePath += "\\ScuffManager";
+
+  if (!std::filesystem::exists(workablePath))
+  {
+    mkdir(workablePath.c_str());
+  }
+
+
+
+  for (const fs::directory_entry &dirEntry : fs::directory_iterator(workablePath))
+  {
+    fs::path dir(dirEntry);
+    fs::path file("data.scuff");
+    fs::path fullPath = dir / file;
+
+    //std::cout << fullPath << std::endl;
+
+    std::ifstream data(fullPath);
+
+    if (data.fail())
+    {
+      std::cerr << "Error: " << strerror(errno);
+    }
+    else {
+      Command* c = new Command;
+      size_t type = 0;
+      data >> type; data.ignore();
+      c->type = static_cast<CommandType>(type); // Set type of command
+
+      std::string buf = "";
+      // Use getline instead of >> /ignore where data is unknown
+      std::getline(data, buf);
+      c->icon = buf; // ICON
+      buf = "";
+
+      std::getline(data, buf);
+      c->name = buf; // NAME
+      buf = "";
+
+      switch (type)
+      {
+      case CommandType::CMD: {
+        readCmdData(data, c, buf);
+        break;
+      }
+      case CommandType::EXPLORER: {
+        readExplorerData(data, c, buf);
+        break;
+      }
+      case CommandType::WEB: {
+          readWebData(data, c, buf);
+          break;
+      }
+      default: {
+        std::cout << "Unexpected command type detected, exiting..." << std::endl;
+        exit(1);
+      }
+      }
+      // Always remember to close up your data streams lads
+      data.close();
+      commands.push_back(c);
+    }
+  }
+}

@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>stylesheets/ManjaroMix.qss</file>
+        <file>../../../art/Icons/Fatcow-Farm-Fresh-Folder-black.ico</file>
+        <file>resources/Fatcow-Farm-Fresh-Folder-black.ico</file>
+        <file>resources/default.ico</file>
+    </qresource>
+</RCC>
