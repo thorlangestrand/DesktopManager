@@ -75,7 +75,7 @@ void MainWindow::setupButtons()
         ScuffButton* editB = new ScuffButton(commands[i]);
         editB->setText("Edit");
         //QGridLayout* lol = new QGridLayout;
-        connect(editB, &QPushButton::pressed, this, [i,this]() {MainWindow::editCommand(i);} );
+        connect(editB, &QPushButton::pressed, this, [i,this]() {MainWindow::buttonResponseEditCommand(i);} );
         QGridLayout* qg = new QGridLayout;
 
         // Name / description
@@ -91,13 +91,12 @@ void MainWindow::setupButtons()
 
 
 /**
- * @brief MainWindow::editCommand
+ * @brief MainWindow::buttonResponseEditCommand
  * @param i
  */
-void MainWindow::editCommand(int i)
+void MainWindow::buttonResponseEditCommand(int i)
 {
-    qDebug() << QString::fromStdString(commands[i]->name);
-
+    currentEditHash = hashCommand(commands[i]);
     QString t = "Edit Command";
     CommandForm* cmdFrm = new CommandForm(t, this, commands[i]);
     cmdFrm->resize({400,120});
@@ -129,6 +128,25 @@ void MainWindow::addCommand(Command* cmd, CommandForm* cmdFrm)
 
 }
 
+void MainWindow::editCommand(Command* cmd, CommandForm* cmdFrm)
+{
+    // Free memory from form
+    delete cmdFrm;
+
+    // Free space on disk from previous state of edited command
+    DIRERR retVal = MainWindow::removeCommandDirectory(currentEditHash);
+
+    if (retVal != DIRERR::NONE)
+    {
+        MainWindow::handleCommandDirectoryError(cmd, retVal);
+        return;
+    }
+
+    MainWindow::setupButtons();
+    MainWindow::saveCommand(cmd);
+}
+
+
 
 
 /**
@@ -139,7 +157,6 @@ void MainWindow::addCommand(Command* cmd, CommandForm* cmdFrm)
 void MainWindow::rejectForm(CommandForm* cmdFrm)
 {
     delete cmdFrm;
-    qDebug() << "abort";
 }
 
 
@@ -157,37 +174,10 @@ void MainWindow::deleteCommand(Command* cmd, CommandForm* cmdFrm)
     // Delete form
     delete cmdFrm;
 
-    // Delete from disk
-    LPWSTR path = NULL;
-
-    // Result of folder path, 0 if no err
-    HRESULT hr = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &path);
-
-    if (!SUCCEEDED(hr))
+    DIRERR retVal = MainWindow::removeCommandDirectory(hashCommand(cmd));
+    if (retVal != DIRERR::NONE)
     {
-        Warn("Catastrophic failure failed to locate appdata");
-        return;
-    }
-
-    CoTaskMemFree(path);
-
-    std::string workablePath = utf8_encode(path);
-    workablePath += "\\ScuffManager";
-
-    QString folderId = hashCommand(cmd);
-    namespace fs = std::filesystem;
-
-    std::string dirId = workablePath + "\\" + folderId.toStdString();
-
-    fs::path file("data.scuff");
-    fs::path fullPath = dirId / file;
-
-    bool removed = fs::remove_all(dirId);
-    qDebug() << fullPath;
-
-    if (!removed)
-    {
-        Warn("Error, unable to remove file for command " + QString::fromStdString(cmd->name) +" !");
+        MainWindow::handleCommandDirectoryError(cmd, retVal);
         return;
     }
 
@@ -208,7 +198,6 @@ void MainWindow::deleteCommand(Command* cmd, CommandForm* cmdFrm)
     {
         commands.push_back(c);
     }
-    qDebug() << commands.size();
 
     //qDebug()<<QString::fromStdString(cmd->icon);
     MainWindow::setupButtons();

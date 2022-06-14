@@ -24,6 +24,7 @@
 #include "ScuffButton.h"
 #include "HashCommand.h"
 #include "Warn.h"
+#include "DirectoryErrorEnum.h"
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -37,6 +38,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+private:
+    // Need to keep track of the hash of the current edit
+    // It will obviously change as the command is edited,
+    // so we need to store the hash of the previous state
+    // in order to delete the previous command from disk
+    QString currentEditHash = "";
 
 private slots:
     void on_pushButton_pressed();
@@ -45,6 +52,7 @@ private slots:
 public slots:
     void addCommand(Command* cmd, CommandForm* cmdFrm);
     void deleteCommand(Command* cmd, CommandForm* cmdFrm);
+    void editCommand(Command* cmd, CommandForm* cmdFrm);
 
 private:
     Ui::MainWindow *ui;
@@ -52,8 +60,9 @@ private:
     void saveCommand(Command* cmd);
     void getCommands();
     void setupButtons();
-    // Index
-    void editCommand(int i);
+    void buttonResponseEditCommand(int i);
+    DIRERR removeCommandDirectory(QString hash);
+    void handleCommandDirectoryError(Command* cmd, DIRERR err);
 public:
     void rejectForm(CommandForm* cmdFrm);
 };

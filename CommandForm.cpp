@@ -293,8 +293,17 @@ void CommandForm::verify()
         cmd->param = utf8_decode(tmpP.toStdString());
         cmd->website = webEdit->text().toStdString();
 
-        // I don't know why this works
+        // I don't know why we can access mainwindow like this
         // Thanks random stackoverflow guy with 1 upvote
+
+        // If we're editing, send edit signal to main
+        if (editing)
+        {
+            mw->editCommand(cmd, this);
+            return;
+        }
+
+        // Else, add command to main
         mw->addCommand(cmd, this);
 
 

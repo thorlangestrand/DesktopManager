@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     QString styleSheet = QLatin1String(styleSheetFile.readAll());
     QApplication a(argc, argv);
     a.setStyleSheet(styleSheet);
+    //a.setWindowIcon(QIcon("C:\\Users\\admin\\Desktop\\PC\\code\\qt\\DesktopManager\\resources\\rinsmile.png"));
     MainWindow w;
     w.show();
     return a.exec();
