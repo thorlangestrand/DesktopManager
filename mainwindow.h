@@ -15,6 +15,8 @@
 #include <filesystem>
 #include <fstream>
 #include <future>
+#include <QKeyEvent>
+#include <QShortcut>
 
 #include "ui_mainwindow.h"
 #include "ExecuteProcess.h"
@@ -47,7 +49,9 @@ private:
 
 private slots:
     void on_pushButton_pressed();
-    void on_pushButton_2_pressed();
+    //void on_pushButton_2_pressed();
+
+    void on_searchBox_textChanged();
 
 public slots:
     void addCommand(Command* cmd, CommandForm* cmdFrm);
@@ -57,12 +61,25 @@ public slots:
 private:
     Ui::MainWindow *ui;
     std::vector<Command*> commands;
+    // Used for search functionality
+    std::vector<Command*> matchingCommands;
+    // String representation of stylesheet
+    // used for buttons not selected by search
+    QString unselectedStyleSheet;
+private:
     void saveCommand(Command* cmd);
     void getCommands();
     void setupButtons();
     void buttonResponseEditCommand(int i);
+    void buttonResponseEditCommand();
     DIRERR removeCommandDirectory(QString hash);
     void handleCommandDirectoryError(Command* cmd, DIRERR err);
+    // Keypress, searching
+    void keyPressEvent(QKeyEvent* k);
+    Command* currentMatch();
+    // Handle matching (whether command matches search)
+    void handleMatch();
+
 public:
     void rejectForm(CommandForm* cmdFrm);
 };

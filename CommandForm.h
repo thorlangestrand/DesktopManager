@@ -95,6 +95,7 @@ private:
     void paramButtonFile();
     void deleteCommand();
     void deleteButtonHandle();
+    void openFolderHandle();
 };
 
 

@@ -51,6 +51,10 @@ void CommandForm::paramButtonFile()
         fileName = QFileDialog::getExistingDirectory(this, "Directory", QString::fromStdString(workablePath));
         break;
     }
+    case CommandType::SWF: {
+        fileName = QFileDialog::getOpenFileName(this, "Flash File", QString::fromStdString(workablePath), tr("Executables (*.swf)"));
+        break;
+    }
     default: {
         break;
     }
@@ -58,6 +62,30 @@ void CommandForm::paramButtonFile()
 
     paramEdit->setText(fileName);
 }
+
+
+
+/**
+ * @brief CommandForm::openFolderHandle
+ *
+ * Bitta spaghetti to get CTRL+O to open the current
+ * selection
+ */
+void CommandForm::openFolderHandle()
+{
+    if (iconEdit->hasFocus()) {
+        iconButton->click();
+        return;
+    }
+    if (paramEdit->hasFocus())
+    {
+        paramButton->click();
+        return;
+    }
+}
+
+
+
 
 /**
  * @brief CommandForm::deleteButtonHandle
@@ -67,8 +95,36 @@ void CommandForm::paramButtonFile()
  */
 void CommandForm::deleteButtonHandle()
 {
-    accept();
-    mw->deleteCommand(cmd, this);
+//    QDialog* deleteDialog = new QDialog(this);
+//    QGridLayout* qg = new QGridLayout(this);
+//    QLabel* del = new QLabel(this);
+//    del->setText("Delete Command");
+
+//    QDialogButtonBox* acc = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, deleteDialog);
+//    connect(acc, &QDialogButtonBox::accepted, this, [this](){accept(); this->acceptedOutcome();});
+//    qg->addWidget(del, 1, 1);
+//    qg->addWidget(acc, 2, 0, 1, 2);
+
+//    deleteDialog->setLayout(qg);
+
+//    deleteDialog->show();
+
+
+
+
+  accept();
+  mw->deleteCommand(cmd, this);
+
+
+
+
+//    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+//    // When press Ok, Cancel, handle these
+//    // Verify calls CommandForm::verify which we have implemented ourselves
+//    connect(buttonBox, &QDialogButtonBox::accepted, this, &CommandForm::verify);
+//    // Reject closes the window immediately by default
+//    connect(buttonBox, &QDialogButtonBox::rejected, this, &CommandForm::reject);
+
 }
 
 
@@ -82,7 +138,8 @@ CommandForm::CommandForm(const QString& title, MainWindow* parent, Command* _cmd
     {
         "Cmd",
         "Explorer",
-        "Web"
+        "Web",
+        "Swf"
     };
 
     // Set ptr to command so it can be accessed throughout the class
@@ -122,6 +179,7 @@ CommandForm::CommandForm(const QString& title, MainWindow* parent, Command* _cmd
     iconButton->setIcon(QIcon(":/resources/Fatcow-Farm-Fresh-Folder-black.ico"));
     paramButton = new QPushButton;
     paramButton->setIcon(QIcon(":/resources/Fatcow-Farm-Fresh-Folder-black.ico"));
+
     deleteButton = new QPushButton;
     deleteButton->setText("Delete");
 
@@ -133,6 +191,7 @@ CommandForm::CommandForm(const QString& title, MainWindow* parent, Command* _cmd
     connect(deleteButton, &QPushButton::pressed, this, &CommandForm::deleteButtonHandle);
 
 
+    paramEdit->hasFocus();
 
 
     uiStorage.push_back({ paramLabel, paramEdit, paramButton });
@@ -170,6 +229,14 @@ CommandForm::CommandForm(const QString& title, MainWindow* parent, Command* _cmd
     connect(type, &QComboBox::currentIndexChanged, this, &CommandForm::command_type_index_changed);
 
     CommandForm::command_type_index_changed(cmdType);
+
+
+    // Shortcut to yeet
+    QShortcut* editCommand = new QShortcut(QKeySequence("Delete"), this);
+    QObject::connect(editCommand, &QShortcut::activated, this, [this](){ this->deleteButtonHandle(); });
+
+    QShortcut* openFolder = new QShortcut(QKeySequence("Ctrl+O"), this);
+    QObject::connect(openFolder, &QShortcut::activated, this, [this](){ this->openFolderHandle(); });
 
 }
 
@@ -240,6 +307,21 @@ bool CommandForm::acceptedOutcome()
         if (!fs::exists(paramEdit->text().toStdString()))
         {
             Warn(QString::fromStdString(paramEdit->text().toStdString() + " is not a valid folder"));
+            return false;
+        }
+        return true;
+    }
+    case CommandType::SWF : {
+        // Given param
+        if (paramEdit->text().isEmpty())
+        {
+            Warn("No parameters given");
+            return false;
+        }
+        // Does folder exist
+        if (!fs::exists(paramEdit->text().toStdString()))
+        {
+            Warn(QString::fromStdString(paramEdit->text().toStdString() + " is not a valid file path"));
             return false;
         }
         return true;
@@ -369,6 +451,10 @@ void CommandForm::command_type_index_changed(int index)
         break;
     }
     case CommandType::EXPLORER: {
+        hideOthers({ paramLabel, paramEdit, paramButton});
+        break;
+    }
+    case CommandType::SWF : {
         hideOthers({ paramLabel, paramEdit, paramButton});
         break;
     }

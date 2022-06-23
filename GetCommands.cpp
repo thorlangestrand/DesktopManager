@@ -11,11 +11,11 @@
  * @param data      Stream of data being read
  * @param c         Explorer command
  */
-void readExplorerData(std::ifstream& data, Command* c, std::string& buf)
-{
-  std::getline(data, buf);
-  c->param = utf8_decode(buf); // PARAM
-}
+//void readExplorerData(std::ifstream& data, Command* c, std::string& buf)
+//{
+//    std::getline(data, buf);
+//    c->param = utf8_decode(buf); // PARAM
+//}
 
 /**
  * @brief
@@ -28,11 +28,16 @@ void readExplorerData(std::ifstream& data, Command* c, std::string& buf)
  * @param data      Stream of data being read
  * @param c         Cmd command
  */
-void readCmdData(std::ifstream& data, Command* c, std::string& buf)
+void readCommandData(std::ifstream& data, Command* c, std::string& buf)
 {
     std::getline(data, buf);
     c->param = utf8_decode(buf);
 }
+
+
+
+
+
 
 /**
  * @brief
@@ -74,17 +79,6 @@ void MainWindow::getCommands()
 {
   namespace fs = std::filesystem;
 
-  // Again, just for testing
-//  for (Command* c : commands)
-//  {
-//      delete c;
-//  }
-//  commands.clear();
-
-
-
-
-
 
   LPWSTR path = NULL;
 
@@ -117,13 +111,11 @@ void MainWindow::getCommands()
     fs::path file("data.scuff");
     fs::path fullPath = dir / file;
 
-    //std::cout << fullPath << std::endl;
-
     std::ifstream data(fullPath);
 
     if (data.fail())
     {
-      std::cerr << "Error: " << strerror(errno);
+      Warn("Error, failure to open file at " + QString::fromStdString(fullPath.generic_string()));
     }
     else {
       Command* c = new Command;
@@ -132,7 +124,8 @@ void MainWindow::getCommands()
       c->type = static_cast<CommandType>(type); // Set type of command
 
       std::string buf = "";
-      // Use getline instead of >> /ignore where data is unknown
+      // Use getline instead of >> / ignore where data structure is unknown
+      // (e.g. undefined spacing)
       std::getline(data, buf);
       c->icon = buf; // ICON
       buf = "";
@@ -144,19 +137,23 @@ void MainWindow::getCommands()
       switch (type)
       {
       case CommandType::CMD: {
-        readCmdData(data, c, buf);
+        readCommandData(data, c, buf);
         break;
       }
-      case CommandType::EXPLORER: {
-        readExplorerData(data, c, buf);
+      case CommandType::EXPLORER: {  
+        readCommandData(data, c, buf);
         break;
       }
       case CommandType::WEB: {
-          readWebData(data, c, buf);
-          break;
+        readWebData(data, c, buf);
+        break;
+      }
+      case CommandType::SWF: {
+        readCommandData(data, c, buf);
+        break;
       }
       default: {
-        std::cout << "Unexpected command type detected, exiting..." << std::endl;
+        Warn("Unexpected command type detected, exiting...");
         exit(1);
       }
       }

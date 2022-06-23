@@ -13,6 +13,29 @@ MainWindow::MainWindow(QWidget *parent)
     MainWindow::getCommands();
     // Setup buttons from commands
     MainWindow::setupButtons();
+    // Prevent buttons from being affected, should change to deal with buttons later
+    //ui->centralwidget->grabKeyboard();
+    //ui->searchBox->setReadOnly(true);
+    // Alternative stylesheet used for unselected commands
+    QFile styleSheetFile(":/stylesheets/Unselected.qss");
+    styleSheetFile.open(QIODevice::ReadOnly);
+    unselectedStyleSheet = QLatin1String(styleSheetFile.readAll());
+
+    MainWindow::handleMatch();
+
+
+    // Unsure where to set up shortcuts, just gonna do it in setup
+        //MainWindow::ui->pushButton->click();
+
+    // Create new command on ctrl+n
+    QShortcut* newCommand = new QShortcut(QKeySequence("Ctrl+N"), this);
+    QObject::connect(newCommand, &QShortcut::activated, this, [this](){ this->ui->pushButton->click(); });
+
+    // If command selected unique, edit command, else nothing
+    QShortcut* editCommand = new QShortcut(QKeySequence("Ctrl+E"), this);
+    QObject::connect(editCommand, &QShortcut::activated, this, [this](){ this->buttonResponseEditCommand();});
+
+
 }
 
 MainWindow::~MainWindow()
@@ -23,6 +46,131 @@ MainWindow::~MainWindow()
         delete c;
     }
     commands.clear();
+    matchingCommands.clear();
+}
+
+
+
+
+// TODO
+
+// CTRL+N, NEW COMMAND
+// CTRL+E, EDIT COMMAND SAME SEARCH LOGIC AS LAUNCH
+// CREATE SCRIPT TO CONVERT PNGS TO ICONS, FEED
+
+
+
+
+Command* MainWindow::currentMatch()
+{
+    if (matchingCommands.size() == 1) return matchingCommands[0];
+    return nullptr;
+}
+
+
+
+
+
+
+
+
+void MainWindow::handleMatch()
+{
+    matchingCommands.clear();
+    for (Command*& c :commands)
+    {
+        if (c->nameMatch(ui->searchBox->toPlainText().toStdString()))
+        {
+            matchingCommands.push_back(c);
+            c->updateUi("");
+        }
+        else {
+            c->updateUi(unselectedStyleSheet);
+        }
+    }
+
+}
+
+
+
+/**
+ * @brief MainWindow::keyPressEvent
+ * Handle searching
+ *
+ * @param k
+ */
+void MainWindow::keyPressEvent(QKeyEvent* k)
+{
+    int tmpKeyCode = k->key();
+
+    // Remove focus from search, no update to search, return
+    if (tmpKeyCode == Qt::Key::Key_Escape)
+    {
+        ui->searchBox->clearFocus();
+        return;
+    }
+
+    if (k->key() == Qt::Key::Key_Backspace)
+    {
+        // If control pressed, delete last word until space
+        if (k->modifiers() == Qt::KeyboardModifier::ControlModifier)
+        {
+            // This can be done much more compact but readability > compactness
+            QString tmpContent = ui->searchBox->toPlainText();
+            int lastSpace = tmpContent.lastIndexOf(" ");
+
+            // Remove spaces
+            while(tmpContent.at(lastSpace).isSpace())
+                lastSpace--;
+
+            // If no spaces
+            if (lastSpace == -1)
+                ui->searchBox->setText("");
+
+            ui->searchBox->setText(tmpContent.left(lastSpace + 1));
+
+            //ui->searchBox->setText(ui->searchBox->toPlainText().left(ui->searchBox->toPlainText().lastIndexOf(" ")));
+        }
+        else {
+            // Remove last char
+            ui->searchBox->setText(ui->searchBox->toPlainText().left(ui->searchBox->toPlainText().size()-1));
+        }
+
+        // Have to reset matches and possibly find new ones by rolling back
+
+        //matchingCommands.push_back(commands[0]);
+
+    }
+    else {
+        if (k->modifiers() != Qt::KeyboardModifier::ShiftModifier && k->key() > 64 && k->key() < 91)
+        {
+            tmpKeyCode += 32;
+        }
+        if (tmpKeyCode > 19 && tmpKeyCode < 127)
+        {
+            ui->searchBox->setText(ui->searchBox->toPlainText() + (QChar)tmpKeyCode);
+        }
+
+
+
+
+
+    }
+    handleMatch();
+    // If uppercase and shift not held convert to lowercase (bug with qt input)
+
+
+    if (k->key() == Qt::Key::Key_Return || k->key() == Qt::Key::Key_Enter)
+    {
+        // CHECK IF ONLY ONE MATCH; ELSE DO NOTHING;
+        if (matchingCommands.size() == 1)
+        {
+            matchingCommands[0]->run();
+            ui->searchBox->setText("");
+            MainWindow::handleMatch();
+        }
+    }
+
 }
 
 
@@ -75,7 +223,7 @@ void MainWindow::setupButtons()
         ScuffButton* editB = new ScuffButton(commands[i]);
         editB->setText("Edit");
         //QGridLayout* lol = new QGridLayout;
-        connect(editB, &QPushButton::pressed, this, [i,this]() {MainWindow::buttonResponseEditCommand(i);} );
+        connect(editB, &QPushButton::pressed, this, [i,this]() { MainWindow::buttonResponseEditCommand(i); } );
         QGridLayout* qg = new QGridLayout;
 
         // Name / description
@@ -84,8 +232,20 @@ void MainWindow::setupButtons()
         qg->addWidget(pb, 0, 1, 1, 4);
         qg->addWidget(cmdName, 1, 1, 1 ,3);
         qg->addWidget(editB, 1, 4, 1, 1);
-        // 6x6 grid should suffice
-        ui->gridLayout->addLayout(qg, (size_t)(i/6), i % 6);
+        //commands[i]->parentData = {pb, cmdName, editB};
+//        commands[i]->parentPushButton = pb;
+//        commands[i]->parentEditButton = editB;
+//        commands[i]->parentLabel = cmdName;
+
+        commands[i]->container = { pb, editB, cmdName };
+
+
+        //QWidget* wat = new QWidget;
+        //wat->show();
+        //qg->setParent(wat);
+        // 5x5 grid should suffice
+        ui->gridLayout->addLayout(qg, (size_t)(i/5), i % 5);
+        //ui->gridLayout->addWidget(wat, (size_t)(i/5), i%5);
     }
 }
 
@@ -104,7 +264,18 @@ void MainWindow::buttonResponseEditCommand(int i)
 
 }
 
-
+void MainWindow::buttonResponseEditCommand()
+{
+    Command* cmd = MainWindow::currentMatch();
+    if (cmd == nullptr) return;
+    ui->searchBox->setText("");
+    MainWindow::handleMatch();
+    currentEditHash = hashCommand(cmd);
+    QString t = "Edit Command";
+    CommandForm* cmdFrm = new CommandForm(t, this, cmd);
+    cmdFrm->resize({400,120});
+    cmdFrm->show();
+}
 
 
 
@@ -259,7 +430,6 @@ void MainWindow::saveCommand(Command* cmd)
 
 void MainWindow::on_pushButton_pressed()
 {
-    std::cout << "he" << std::endl;
     QString t = "New Command";
     Command* cmd = new Command;
     CommandForm* cmdFrm = new CommandForm(t, this, cmd);
@@ -267,8 +437,6 @@ void MainWindow::on_pushButton_pressed()
     cmdFrm->show();
 
     //delete cmdFrm;
-
-    qDebug() << QString::fromStdString(cmd->name);
     return;
 
 
@@ -306,80 +474,93 @@ void MainWindow::on_pushButton_pressed()
 }
 
 
-void MainWindow::on_pushButton_2_pressed()
-{
-    MainWindow::getCommands();
-    for (Command* c : commands)
-    {
-//      qDebug() << c->type;
-//      qDebug() << QString::fromStdString(c->icon);
-//      qDebug() << QString::fromStdString(c->name);
-//      qDebug() << QString::fromStdString(utf8_encode(c->param));
-//      qDebug() << QString::fromStdString(c->website);
-//      qDebug() << "END COMMAND";
-      switch (c->type)
-      {
-      case CommandType::CMD: {
-        //c->param = L"\"" + c->param + L"\"";
-          // ASYNC CANNOT DIFFERENTIATE BETWEEN OVERLOADS
-          qDebug() << c->param;
-          qDebug() << QString::fromStdString(c->name);
-          std::future<size_t> d = std::async(std::launch::async, ExecuteProcess, c->param);
+//void MainWindow::on_pushButton_2_pressed()
+//{
+//    MainWindow::getCommands();
+//    for (Command* c : commands)
+//    {
+////      qDebug() << c->type;
+////      qDebug() << QString::fromStdString(c->icon);
+////      qDebug() << QString::fromStdString(c->name);
+////      qDebug() << QString::fromStdString(utf8_encode(c->param));
+////      qDebug() << QString::fromStdString(c->website);
+////      qDebug() << "END COMMAND";
+//      switch (c->type)
+//      {
+//      case CommandType::CMD: {
+//        //c->param = L"\"" + c->param + L"\"";
+//          // ASYNC CANNOT DIFFERENTIATE BETWEEN OVERLOADS
+//          qDebug() << c->param;
+//          qDebug() << QString::fromStdString(c->name);
+//          std::future<size_t> d = std::async(std::launch::async, ExecuteProcess, c->param);
 
-          //d.wait();
-        //std::system(utf8_encode(c->param).c_str());
-//        size_t check = ExecuteProcess(c->param);
-//        std::vector<std::future<size_t>> h;
-//        he(c);
-//        //h.push_back(std::async(std::launch::async, ExecuteProcess, c->param,this));
+//          //d.wait();
+//        //std::system(utf8_encode(c->param).c_str());
+////        size_t check = ExecuteProcess(c->param);
+////        std::vector<std::future<size_t>> h;
+////        he(c);
+////        //h.push_back(std::async(std::launch::async, ExecuteProcess, c->param,this));
 
-//        if (check!= 0)
-//        {
-//            qDebug() << "Err executing process";
-//            qDebug() << GetLastError();
-//        }
-        break;
-      }
-      case CommandType::EXPLORER: {
-//        size_t check = ExecuteProcessW(L"C:\\Windows\\explorer.exe", c->param);
-//        if (check != 0)
-//        {
-//          qDebug() << "Err executing process";
-//          qDebug() << GetLastError();
-//        }
-        break;
-      }
-      case CommandType::WEB: {
-          std::string tmp = "rundll32 url.dll, FileProtocolHandler ";
-          // If not begin with www., add
-          if(c->website.rfind("www.", 0) != 0)
-          {
-              tmp += "www.";
-          }
-          tmp += c->website;
-
-          std::future<int> d = std::async(std::launch::async, system, tmp.c_str());
-          //d.wait();
-
-
-
-
-          //system(tmp.c_str()); //WORKS
-          //qDebug() << QString::fromStdString(tmp);
-
-//          size_t check = ExecuteProcess(utf8_decode(tmp));
-//          if (check != 0)
+////        if (check!= 0)
+////        {
+////            qDebug() << "Err executing process";
+////            qDebug() << GetLastError();
+////        }
+//        break;
+//      }
+//      case CommandType::EXPLORER: {
+////        size_t check = ExecuteProcessW(L"C:\\Windows\\explorer.exe", c->param);
+////        if (check != 0)
+////        {
+////          qDebug() << "Err executing process";
+////          qDebug() << GetLastError();
+////        }
+//        break;
+//      }
+//      case CommandType::WEB: {
+//          std::string tmp = "rundll32 url.dll, FileProtocolHandler ";
+//          // If not begin with www., add
+//          if(c->website.rfind("www.", 0) != 0)
 //          {
-//              qDebug() << GetLastError();
+//              tmp += "www.";
 //          }
-          break;
-      }
-      default: {
-        qDebug() << "Unexpected command type detected, exiting...";;
-        exit(1);
-      }
-      }
-    }
+//          tmp += c->website;
 
+//          std::future<int> d = std::async(std::launch::async, system, tmp.c_str());
+//          //d.wait();
+
+
+
+
+//          //system(tmp.c_str()); //WORKS
+//          //qDebug() << QString::fromStdString(tmp);
+
+////          size_t check = ExecuteProcess(utf8_decode(tmp));
+////          if (check != 0)
+////          {
+////              qDebug() << GetLastError();
+////          }
+//          break;
+//      }
+//      default: {
+//        qDebug() << "Unexpected command type detected, exiting...";;
+//        exit(1);
+//      }
+//      }
+//    }
+
+//}
+
+
+void MainWindow::on_searchBox_textChanged()
+{
+    // This is neat, annoying
+//    if (ui->searchBox->toPlainText().isEmpty() && ui->searchBox->isVisible())
+//    {
+//        ui->searchBox->hide();
+//    }
+//    else {
+//        ui->searchBox->show();
+//    }
 }
 

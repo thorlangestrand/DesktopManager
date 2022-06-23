@@ -1,9 +1,12 @@
 #ifndef SCUFFBUTTON_H
 #define SCUFFBUTTON_H
 #include <QPushButton>
+#include <QEvent>
 #include <QDebug>
-#include "Command.h"
 
+// This is to avoid recursive inclusion but I honestly
+// don't know why it works
+struct Command;
 class ScuffButton : public QPushButton
 {
     Q_OBJECT
@@ -12,6 +15,7 @@ public:
     ~ScuffButton() {};
 public:
     Command* cmd = nullptr;
+    void updateCum();
 };
 
 #endif // SCUFFBUTTON_H

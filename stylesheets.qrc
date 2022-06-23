@@ -4,5 +4,6 @@
         <file>../../../art/Icons/Fatcow-Farm-Fresh-Folder-black.ico</file>
         <file>resources/Fatcow-Farm-Fresh-Folder-black.ico</file>
         <file>resources/default.ico</file>
+        <file>stylesheets/Unselected.qss</file>
     </qresource>
 </RCC>
