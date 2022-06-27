@@ -9,9 +9,12 @@ int main(int argc, char *argv[])
     QFile styleSheetFile(":/stylesheets/ManjaroMix.qss");
     styleSheetFile.open(QIODevice::ReadOnly);
     QString styleSheet = QLatin1String(styleSheetFile.readAll());
+
+    // Icon is set in DesktopManager.pro (project file) by
+    // RC_ICONS = C:\Path\To\Icon\icon.ico
+
     QApplication a(argc, argv);
     a.setStyleSheet(styleSheet);
-    //a.setWindowIcon(QIcon("C:\\Users\\admin\\Desktop\\PC\\code\\qt\\DesktopManager\\resources\\rinsmile.png"));
     MainWindow w;
     w.show();
     return a.exec();

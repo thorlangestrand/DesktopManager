@@ -6,9 +6,15 @@
 #include <QDebug>
 #include <QKeyEvent>
 
-// Overload basic button and "promote" button in ui
-// in order for it to ignore keypresses (spacebar in particular)
-// as this was messing with the search functionality i wanted
+
+
+/**
+ * @brief The AddCommandButton class
+ *
+ * Inherit basic button and "promote" button in ui to AddCommandButton class
+ * in order for it to ignore keypresses (spacebar in particular)
+ * as this was messing with the search functionality i wanted
+ */
 class AddCommandButton : public QPushButton
 {
     Q_OBJECT;

@@ -45,17 +45,72 @@ size_t ExecuteProcessW(std::wstring fullpath, std::wstring param)
   // Copy data from param to buffer
   wcscpy_s(processParam, param.size() + 1, param.c_str());
 
-  // CreateProcess API initialization
-  STARTUPINFOW siStartupInfo;
-  PROCESS_INFORMATION piProcessInfo;
+  STARTUPINFOW siStartupInfo = {};
+  PROCESS_INFORMATION piProcessInfo = {};
 
-  // Need to set memory for some reason
-  memset(&siStartupInfo, 0, sizeof(STARTUPINFOW));
-  memset(&piProcessInfo, 0, sizeof(PROCESS_INFORMATION));
+  /**
+   * Zero initialize all values. This can also be done by writing
+   * STARTUPINFOW siStartupInfo = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+   * and
+   * PROCESS_INFORMATION piProcessInfo = {0,0,0,0};
+   * or
+   * STARTUPINFOW = {};
+   * and
+   * PROCESS_INFORMATION = {};
+   * respectively
+   *
+   *
+   * The reason memset works here is because STARTUPINFOW and PROCESS_INFORMATION
+   * are POD (Plain Old Data) structures
+   *
+   * A POD struct or class is a struct without any user defined constructors or
+   * destructors or copy assignment operators. It also may not have any non-static
+   * members that are not POD structures. An example of a non-POD structure would be
+   * the std::string class
+   *
+   * There are other things that also determine whether a struct is a POD, however I
+   * do not understand them well enough to explain it here
+   *
+   * Example
+   *
+   * Given structs
+   * struct example_one {
+   *    int a;
+   *    int b;
+   * };
+   *
+   * and
+   * struct example_two {
+   *    int a;
+   *    std::string b;
+   * }
+   *
+   * both
+   * example_one e1 = {};
+   * and
+   * example_two e2 = {};
+   * would be valid initializers
+   * However, only for example_one can the memset method be used
+   *
+   * example_one e1;
+   * memset(&e1, 0, sizeof(example_one));
+   *
+   * The above is valid as example_one only has POD members
+   *
+   * example_two e2;
+   * memset(&e2, 0, sizeof(example_two);
+   *
+   * If we now try to something like set
+   * e2.b = "";
+   * the program will crash
+   *
+   * The program does not crash of e2.b is set to a strng of length 1 or greater
+   * Why this happens is unknown, and it appears to be completely undefined
+   * behaviour
+   */
 
   // Size of structure
   siStartupInfo.cb = sizeof(siStartupInfo);
-
 
   /**
    * NOTE:
@@ -103,12 +158,12 @@ size_t ExecuteProcess(std::wstring fullpath)
 
 
   // CreateProcess API initialization
-  STARTUPINFOW siStartupInfo;
-  PROCESS_INFORMATION piProcessInfo;
+  STARTUPINFOW siStartupInfo = {};
+  PROCESS_INFORMATION piProcessInfo = {};
 
-  // Need to set memory for some reason
-  memset(&siStartupInfo, 0, sizeof(STARTUPINFOW));
-  memset(&piProcessInfo, 0, sizeof(PROCESS_INFORMATION));
+  // Zero initialize objects
+  //memset(&siStartupInfo, 0, sizeof(STARTUPINFOW));
+  //memset(&piProcessInfo, 0, sizeof(PROCESS_INFORMATION));
 
   // Size of structure
   siStartupInfo.cb = sizeof(siStartupInfo);
@@ -138,46 +193,3 @@ size_t ExecuteProcess(std::wstring fullpath)
 
   return iReturnVal;
 }
-//void ExecuteProcess(std::wstring fullpath)
-//{
-//  // Return value, 0 on success
-//  std::wstring sTempStr = L"";
-//  // First param of CreateProcessW has to be the executable on its own,
-//  // so need to copy data in order to build up full command
-//  sTempStr = fullpath;
-
-
-//  // CreateProcess API initialization
-//  STARTUPINFOW siStartupInfo;
-//  PROCESS_INFORMATION piProcessInfo;
-
-//  // Need to set memory for some reason
-//  memset(&siStartupInfo, 0, sizeof(STARTUPINFOW));
-//  memset(&piProcessInfo, 0, sizeof(PROCESS_INFORMATION));
-
-//  // Size of structure
-//  siStartupInfo.cb = sizeof(siStartupInfo);
-
-
-//  /**
-//   * NOTE:
-//   * Can also have the first parameter be NULL
-//   */
-//  // If failed
-//  if (CreateProcessW(const_cast<LPCWSTR>(fullpath.c_str()),
-//    NULL, 0, 0, false,
-//    CREATE_DEFAULT_ERROR_MODE, 0, 0,
-//    &siStartupInfo, &piProcessInfo) == false)
-//  {
-
-//  }
-
-//  // Watch process for 1 second, if fail return 1
-
-
-
-
-//  // Release handles
-//  CloseHandle(piProcessInfo.hProcess);
-//  CloseHandle(piProcessInfo.hThread);
-//}

@@ -1,5 +1,16 @@
 #include "mainwindow.h"
 
+
+/**
+ * @brief MainWindow::removeCommandDirectory
+ *
+ * Removes a command and its containing directory given
+ * by passed hash from disk
+ *
+ * @param hash      Hash of command to be removed from disk
+ *
+ * @return          Error based on outcome, default is NONE
+ */
 DIRERR MainWindow::removeCommandDirectory(QString hash)
 {
     // Delete from disk
@@ -30,6 +41,18 @@ DIRERR MainWindow::removeCommandDirectory(QString hash)
     return DIRERR::NONE;
 }
 
+
+
+/**
+ * @brief MainWindow::handleCommandDirectoryError
+ *
+ * Gives a brief explanation of the given error
+ *
+ * @param cmd       Command which caused the error
+ * @param err       Error type
+ *
+ * @see Warn(...)
+ */
 void MainWindow::handleCommandDirectoryError(Command* cmd, DIRERR err)
 {
     if (err == DIRERR::LOOKUPFAILED)

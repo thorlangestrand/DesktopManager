@@ -372,6 +372,7 @@ void MainWindow::deleteCommand(Command* cmd, CommandForm* cmdFrm)
 
     //qDebug()<<QString::fromStdString(cmd->icon);
     MainWindow::setupButtons();
+    return;
 }
 
 /**
@@ -424,10 +425,20 @@ void MainWindow::saveCommand(Command* cmd)
     cmd->save(output);
     // Always remember to close your streams
     output.close();
+    return;
 }
 
 
 
+/**
+ * @brief MainWindow::on_pushButton_pressed
+ *
+ * On add command button pressed create new command
+ * form
+ *
+ * @see Command
+ * @see CommandForm
+ */
 void MainWindow::on_pushButton_pressed()
 {
     QString t = "New Command";
@@ -435,121 +446,11 @@ void MainWindow::on_pushButton_pressed()
     CommandForm* cmdFrm = new CommandForm(t, this, cmd);
     cmdFrm->resize({400,120});
     cmdFrm->show();
-
-    //delete cmdFrm;
     return;
-
-
-
-
-
-
-
-
-
-
-    //system("explorer C:\\Users\\admin\\Desktop\\PC\\art");
-    //int ret = WinExec("explorer.exe", SW_HIDE);
-
-    //STARTUPINFO si;
-    //PROCESS_INFORMATION pi;
-    //CreateProcess("explorer.exe", "C:\\Users\\admin\\Desktop\\PC\\art", NULL, NULL, FALSE, 0, NULL, NULL, &si ,&pi);
-    //CreateProcess(L"explorer.exe", L"C:\\Users\\admin\\Desktop\\PC\\art",0,0,false,CREATE_DEFAULT_ERROR_MODE,0,0,&si,&pi);
-//    if (CreateProcess(const_cast<LPCWSTR>("explorer.exe"),(LPCWSTR)"" , NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi))
-//    {
-//        WaitForSingleObject(pi.hProcess, INFINITE);
-//        CloseHandle(pi.hProcess);
-//        CloseHandle(pi.hThread);
-//    }
-
-    //ExecuteProcess(L"C:\\Windows\\explorer.exe", L"C:\\Users\\admin\\Desktop\\PC\\art");
-
-    //qDebug() << ret;
-//    std::wstring cum = ;
-//    ExecuteProcess(cum, L"C:\\users\\admin\\desktop\\pc\\art");
-//    return;
-
-
-
 }
 
 
-//void MainWindow::on_pushButton_2_pressed()
-//{
-//    MainWindow::getCommands();
-//    for (Command* c : commands)
-//    {
-////      qDebug() << c->type;
-////      qDebug() << QString::fromStdString(c->icon);
-////      qDebug() << QString::fromStdString(c->name);
-////      qDebug() << QString::fromStdString(utf8_encode(c->param));
-////      qDebug() << QString::fromStdString(c->website);
-////      qDebug() << "END COMMAND";
-//      switch (c->type)
-//      {
-//      case CommandType::CMD: {
-//        //c->param = L"\"" + c->param + L"\"";
-//          // ASYNC CANNOT DIFFERENTIATE BETWEEN OVERLOADS
-//          qDebug() << c->param;
-//          qDebug() << QString::fromStdString(c->name);
-//          std::future<size_t> d = std::async(std::launch::async, ExecuteProcess, c->param);
 
-//          //d.wait();
-//        //std::system(utf8_encode(c->param).c_str());
-////        size_t check = ExecuteProcess(c->param);
-////        std::vector<std::future<size_t>> h;
-////        he(c);
-////        //h.push_back(std::async(std::launch::async, ExecuteProcess, c->param,this));
-
-////        if (check!= 0)
-////        {
-////            qDebug() << "Err executing process";
-////            qDebug() << GetLastError();
-////        }
-//        break;
-//      }
-//      case CommandType::EXPLORER: {
-////        size_t check = ExecuteProcessW(L"C:\\Windows\\explorer.exe", c->param);
-////        if (check != 0)
-////        {
-////          qDebug() << "Err executing process";
-////          qDebug() << GetLastError();
-////        }
-//        break;
-//      }
-//      case CommandType::WEB: {
-//          std::string tmp = "rundll32 url.dll, FileProtocolHandler ";
-//          // If not begin with www., add
-//          if(c->website.rfind("www.", 0) != 0)
-//          {
-//              tmp += "www.";
-//          }
-//          tmp += c->website;
-
-//          std::future<int> d = std::async(std::launch::async, system, tmp.c_str());
-//          //d.wait();
-
-
-
-
-//          //system(tmp.c_str()); //WORKS
-//          //qDebug() << QString::fromStdString(tmp);
-
-////          size_t check = ExecuteProcess(utf8_decode(tmp));
-////          if (check != 0)
-////          {
-////              qDebug() << GetLastError();
-////          }
-//          break;
-//      }
-//      default: {
-//        qDebug() << "Unexpected command type detected, exiting...";;
-//        exit(1);
-//      }
-//      }
-//    }
-
-//}
 
 
 void MainWindow::on_searchBox_textChanged()
@@ -562,5 +463,6 @@ void MainWindow::on_searchBox_textChanged()
 //    else {
 //        ui->searchBox->show();
 //    }
+    return;
 }
 

@@ -1,5 +1,17 @@
 #include "HashCommand.h"
 
+/**
+ * @brief hashCommand
+ *
+ * Converts all data from a command to a hash
+ * which is then used to ensure no exact duplicate
+ * commands
+ * The hash is also used as the save folder where
+ * the command is stored
+ *
+ * @param cmd       Command to be hashed
+ * @return          MD5 hash of command
+ */
 QString hashCommand(Command* cmd)
 {
 

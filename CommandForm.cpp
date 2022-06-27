@@ -89,8 +89,10 @@ void CommandForm::openFolderHandle()
 
 /**
  * @brief CommandForm::deleteButtonHandle
+ *
  * Called upon DELETE button pressed
  * Sends signal to main
+ *
  * @see MainWindow::delteCommand(...)
  */
 void CommandForm::deleteButtonHandle()
@@ -128,24 +130,28 @@ void CommandForm::deleteButtonHandle()
 }
 
 
+/**
+ * @brief CommandForm::CommandForm
+ *
+ * Create a new window to ether create a new or modify
+ * an old command
+ *
+ * @param title     Window title
+ * @param parent    Parent, used for ui and cleanup
+ * @param _cmd      Command to be edited
+ */
 CommandForm::CommandForm(const QString& title, MainWindow* parent, Command* _cmd)
     : QDialog(parent),
     mw(parent)
 {
 
-    // List of commands
-    QStringList CommandList =
-    {
-        "Cmd",
-        "Explorer",
-        "Web",
-        "Swf"
-    };
+
 
     // Set ptr to command so it can be accessed throughout the class
     cmd = _cmd;
 
-    // If command already has name, set editing to true
+    // If command already has name that means it's an existing command being edited
+    // Name cannot be an empty string so this should be fine
     if (!cmd->name.empty()) editing = true;
 
     // Labels for input
@@ -156,6 +162,16 @@ CommandForm::CommandForm(const QString& title, MainWindow* parent, Command* _cmd
 
     // Type input (dropdown)
     type = new QComboBox;
+    // String representation
+    QStringList CommandList =
+    {
+        "Cmd",
+        "Explorer",
+        "Web",
+        "Swf"
+    };
+
+
     type->addItems(CommandList);
 
     // String inputs
@@ -274,7 +290,7 @@ bool CommandForm::acceptedOutcome()
     // Does name exist, universal
     if (cmdNameEdit->text().isEmpty())
     {
-        Warn("No name given for command");
+        Warn("Name cannot be an empty string");
         return false;
     }
     // Check requirements for given command type

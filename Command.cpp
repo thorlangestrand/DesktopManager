@@ -1,5 +1,13 @@
 #include "Command.h"
 
+/**
+ * @brief Command::save
+ *
+ * Writes required data to recreate command
+ * to file
+ *
+ * @param output    stream being written to
+ */
 void Command::save(std::ofstream& output)
 {
     output << type << "\n";
@@ -9,6 +17,14 @@ void Command::save(std::ofstream& output)
     output << website;
 }
 
+
+/**
+ * @brief Command::run
+ *
+ * Runs command based on type
+ *
+ * @see ExecuteProcess(...)
+ */
 void Command::run()
 {
     switch(type)
@@ -48,8 +64,11 @@ void Command::run()
 
 /**
  * @brief Command::nameMatch
- * @param _name     Name being checked
+ *
  * Returns whether or not substring matches name of command
+ *
+ * @param _name     Name being checked
+ *
  * @return      Whether match or not
  */
 bool Command::nameMatch(std::string _name)
@@ -65,6 +84,7 @@ bool Command::nameMatch(std::string _name)
 
 /**
  * @brief Command::updateUi
+ *
  * Updates command UI based on whether or not the command
  * matches the current search
  *
@@ -75,8 +95,6 @@ bool Command::nameMatch(std::string _name)
  */
 void Command::updateUi(const QString& unselectedStyleSheet)
 {
-
-    // Update based on passed stylesheet
     container.pushB->setStyleSheet(unselectedStyleSheet);
     container.editB->setStyleSheet(unselectedStyleSheet);
     container.label->setStyleSheet(unselectedStyleSheet);

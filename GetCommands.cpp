@@ -2,23 +2,6 @@
 
 /**
  * @brief
- * Read data to a command that uses explorer.exe as launch vector
- *
- * Remaining data to read
- * [STRING]         PARAM
- * [STRING]         WEBSITE - IGNORED
- *
- * @param data      Stream of data being read
- * @param c         Explorer command
- */
-//void readExplorerData(std::ifstream& data, Command* c, std::string& buf)
-//{
-//    std::getline(data, buf);
-//    c->param = utf8_decode(buf); // PARAM
-//}
-
-/**
- * @brief
  * Read data to a command that uses cmd.exe as launch vector
  *
  * Remaining data to read
@@ -33,11 +16,6 @@ void readCommandData(std::ifstream& data, Command* c, std::string& buf)
     std::getline(data, buf);
     c->param = utf8_decode(buf);
 }
-
-
-
-
-
 
 /**
  * @brief

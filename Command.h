@@ -8,11 +8,13 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QFile>
+#include <QStringList>
 #include "ScuffButton.h"
 #include "utf8_parse.h"
 #include "ExecuteProcess.h"
 #include "ScuffButton.h"
 
+// Command types
 enum CommandType
 {
   CMD = 0,
@@ -21,6 +23,16 @@ enum CommandType
   SWF = 3
 };
 
+/**
+ * @brief The parentData struct
+ *
+ * Hosts information about the "physical" structure
+ * that represents the command in the ui
+ *
+ * For now only used for editing style but this could
+ * also be used for editing content and deletion
+ * (if it also referenced the qgridlayout that houses all these objects)
+ */
 struct parentData
 {
     ScuffButton* pushB = nullptr;
@@ -35,6 +47,11 @@ struct parentData
     ~parentData(){};
 };
 
+
+/**
+ * @brief The Command struct
+ * Has all the data required for execution of command
+ */
 struct Command
 {
   CommandType type = CommandType::CMD;
@@ -45,14 +62,7 @@ struct Command
 
   parentData container = {nullptr, nullptr, nullptr};
 
-//  ScuffButton* parentPushButton = nullptr;
-//  ScuffButton* parentEditButton = nullptr;
-//  QLabel* parentLabel           = nullptr;
-
   Command(){};
-
-
-
 
   void save(std::ofstream& out);
   void run();

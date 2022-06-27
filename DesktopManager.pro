@@ -3,7 +3,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
-
+# DEFAULT ICON
 RC_ICONS = C:\Users\admin\Desktop\PC\art\Icons\rinsmile.ico
 
 # You can make your code fail to compile if it uses deprecated APIs.
