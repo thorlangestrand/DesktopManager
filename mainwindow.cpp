@@ -24,8 +24,6 @@ MainWindow::MainWindow(QWidget *parent)
     MainWindow::handleMatch();
 
 
-    // Unsure where to set up shortcuts, just gonna do it in setup
-        //MainWindow::ui->pushButton->click();
 
     // Create new command on ctrl+n
     QShortcut* newCommand = new QShortcut(QKeySequence("Ctrl+N"), this);
@@ -35,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent)
     QShortcut* editCommand = new QShortcut(QKeySequence("Ctrl+E"), this);
     QObject::connect(editCommand, &QShortcut::activated, this, [this](){ this->buttonResponseEditCommand();});
 
+    // Exit
+    QShortcut* exitCtrlW = new QShortcut(QKeySequence("Ctrl+Shift+W"), this);
+    QObject::connect(exitCtrlW, &QShortcut::activated, this, [](){ exit(0); });
 
 }
 
@@ -51,12 +52,6 @@ MainWindow::~MainWindow()
 
 
 
-
-// TODO
-
-// CTRL+N, NEW COMMAND
-// CTRL+E, EDIT COMMAND SAME SEARCH LOGIC AS LAUNCH
-// CREATE SCRIPT TO CONVERT PNGS TO ICONS, FEED
 
 
 
