@@ -74,10 +74,8 @@ void Command::run()
 bool Command::nameMatch(std::string _name)
 {
     std::string tmp = name;
-    for (size_t i = 0; i < tmp.size(); i++)
-        tmp[i] = std::toupper(tmp[i]);
-    for (size_t i = 0; i < _name.size(); i++)
-        _name[i] = std::toupper(_name[i]);
+    for (size_t i = 0; i < tmp.size(); i++) { tmp[i] = std::toupper(tmp[i]); }
+    for (size_t i = 0; i < _name.size(); i++) { _name[i] = std::toupper(_name[i]); }
     return (tmp.compare(0, _name.size(), _name) == 0);
 }
 

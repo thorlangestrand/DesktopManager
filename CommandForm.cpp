@@ -237,7 +237,7 @@ CommandForm::CommandForm(const QString& title, MainWindow* parent, Command* _cmd
     mainLayout->addWidget(webLabel, 4, 0);
     mainLayout->addWidget(webEdit, 4, 1);
     mainLayout->addWidget(buttonBox, 5, 0, 1, 2);
-    if (editing) mainLayout->addWidget(deleteButton, 5, 0, 1, 1);
+    if (editing) { mainLayout->addWidget(deleteButton, 5, 0, 1, 1); }
     setLayout(mainLayout);
     setWindowTitle(title);
 
@@ -306,7 +306,7 @@ bool CommandForm::acceptedOutcome()
         // Does executable exist
         if (!fs::exists(paramEdit->text().toStdString()))
         {
-            Warn(QString::fromStdString(paramEdit->text().toStdString() + " is not a valid file path"));
+            Warn(paramEdit->text() + " is not a valid file path");
             return false;
         }
         return true;
@@ -322,7 +322,7 @@ bool CommandForm::acceptedOutcome()
         // Does folder exist
         if (!fs::exists(paramEdit->text().toStdString()))
         {
-            Warn(QString::fromStdString(paramEdit->text().toStdString() + " is not a valid folder"));
+            Warn(paramEdit->text() + " is not a valid folder");
             return false;
         }
         return true;
@@ -337,7 +337,7 @@ bool CommandForm::acceptedOutcome()
         // Does folder exist
         if (!fs::exists(paramEdit->text().toStdString()))
         {
-            Warn(QString::fromStdString(paramEdit->text().toStdString() + " is not a valid file path"));
+            Warn(paramEdit->text() + " is not a valid file path");
             return false;
         }
         return true;

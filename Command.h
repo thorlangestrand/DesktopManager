@@ -60,7 +60,7 @@ struct Command
   std::wstring param = L"";
   std::string website= "";
 
-  parentData container = {nullptr, nullptr, nullptr};
+  parentData container = { nullptr, nullptr, nullptr };
 
   Command(){};
 

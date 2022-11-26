@@ -14,7 +14,6 @@
  */
 QString hashCommand(Command* cmd)
 {
-
 return QString(
             QCryptographicHash::hash(
                 QByteArray::fromStdString(

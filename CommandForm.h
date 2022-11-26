@@ -79,7 +79,7 @@ private:
     // Commandtype, default CMD
     CommandType cmdType = CommandType::CMD;
 
-    // Kinda scuffed way to extract data
+    // Pointer to main window which stores global data
     MainWindow* mw = nullptr;
 
     // This quickly got out of hand, creating a function to deal with scalability
