@@ -8,7 +8,7 @@
 std::string utf8_encode(const std::wstring& wstr)
 {
   // If empty return new string
-  if (wstr.empty()) return std::string();
+  if (wstr.empty()) { return std::string(); }
   // Get size of widestring
   int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
   // Allocate required size and fill with 0
@@ -27,7 +27,7 @@ std::string utf8_encode(const std::wstring& wstr)
 std::wstring utf8_decode(const std::string& str)
 {
   // If empty return new string
-  if (str.empty()) return std::wstring();
+  if (str.empty()) { return std::wstring(); }
   // Get size of string
   int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
   // Allocate required size and fill with 0

@@ -131,7 +131,7 @@ size_t ExecuteProcessW(std::wstring fullpath, std::wstring param)
   if (dwExitCode != 0) iReturnVal = 1;
 
   // Free memory
-  delete[]processParam;
+  delete[] processParam;
 
   // Release handles
   CloseHandle(piProcessInfo.hProcess);
