@@ -18,11 +18,12 @@ SOURCES += \
     HashCommand.cpp \
     RemoveCommandDirectory.cpp \
     ScuffButton.cpp \
-    Warn.cpp \
     addcommandbutton.cpp \
+    initGlobals.cpp \
     main.cpp \
     mainwindow.cpp \
-    utf8_parse.cpp
+    utf8_parse.cpp \
+    warn.cpp
 
 HEADERS += \
     Command.h \
@@ -32,10 +33,12 @@ HEADERS += \
     ExecuteProcess.h \
     HashCommand.h \
     ScuffButton.h \
-    Warn.h \
     addcommandbutton.h \
+    globals.h \
+    initGlobals.h \
     mainwindow.h \
-    utf8_parse.h
+    utf8_parse.h \
+    warn.h
 
 FORMS += \
     mainwindow.ui

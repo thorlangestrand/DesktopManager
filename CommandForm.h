@@ -16,7 +16,7 @@
 #include "Command.h"
 #include "CommandFormUiStorage.h"
 #include "HashCommand.h"
-#include "Warn.h"
+#include "warn.h"
 
 class MainWindow;
 class CommandForm : public QDialog

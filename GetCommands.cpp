@@ -85,6 +85,10 @@ void MainWindow::getCommands()
 
   for (const fs::directory_entry &dirEntry : fs::directory_iterator(workablePath))
   {
+    if (!std::filesystem::is_directory(dirEntry))
+    {
+        continue;
+    }
     fs::path dir(dirEntry);
     fs::path file("data.scuff");
     fs::path fullPath = dir / file;

@@ -38,7 +38,7 @@ void Command::run()
         break;
     }
     case CommandType::SWF : {
-        std::future<size_t> d = std::async(std::launch::async, ExecuteProcessW, L"C:\\Users\\admin\\Desktop\\PC\\not_hentai\\flashplayer32.exe", param);
+        std::future<size_t> d = std::async(std::launch::async, ExecuteProcessW, utf8_decode(globals::swfPath), param);
         break;
     }
     // To run steam shortcuts, use WEB

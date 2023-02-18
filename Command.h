@@ -13,7 +13,7 @@
 #include "utf8_parse.h"
 #include "ExecuteProcess.h"
 #include "ScuffButton.h"
-
+#include "globals.h"
 // Command types
 enum CommandType
 {

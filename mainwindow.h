@@ -9,10 +9,7 @@
 #include <QDir>
 #include <iostream>
 #include <initguid.h>
-#include <shlobj.h>
-#include <knownfolders.h>
 #include <io.h>
-#include <filesystem>
 #include <fstream>
 #include <future>
 #include <QKeyEvent>
@@ -25,8 +22,9 @@
 #include "ExecuteProcess.h"
 #include "ScuffButton.h"
 #include "HashCommand.h"
-#include "Warn.h"
+#include "warn.h"
 #include "DirectoryErrorEnum.h"
+#include "initGlobals.h"
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
