@@ -29,4 +29,3 @@ both from the program and from disk
 
 Commands are saved at C:\users\\[USER]\AppData\Local\ScuffManager in a folder given name as an md5 hash of the command function  
 This should prevent collisions, but md5 collisions are not impossible so there is a chance
-
