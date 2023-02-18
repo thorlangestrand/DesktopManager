@@ -1,12 +1,5 @@
 #include "ExecuteProcess.h"
 
-/**
- * @brief ExecuteProcess
- * Execute a process
- * @param fullpath      Full path to the executable
- * @param param         Parameters used in the command
- * @return size_t       Return code, 0 for success
- */
 size_t ExecuteProcessW(std::wstring fullpath, std::wstring param)
 {
   // Return value, 0 on success
@@ -95,7 +88,7 @@ size_t ExecuteProcessW(std::wstring fullpath, std::wstring param)
    * example_one e1;
    * memset(&e1, 0, sizeof(example_one));
    *
-   * The above is valid as example_one only has POD members
+   * The above is valid as example_one only has POD (plain old data) members
    *
    * example_two e2;
    * memset(&e2, 0, sizeof(example_two);
@@ -104,8 +97,8 @@ size_t ExecuteProcessW(std::wstring fullpath, std::wstring param)
    * e2.b = "";
    * the program will crash
    *
-   * The program does not crash of e2.b is set to a strng of length 1 or greater
-   * Why this happens is unknown, and it appears to be completely undefined
+   * The program does not crash if e2.b is set to a strng of length 1 or greater
+   * Why this happens is beyond me, and it appears to be completely undefined
    * behaviour
    */
 
@@ -140,13 +133,6 @@ size_t ExecuteProcessW(std::wstring fullpath, std::wstring param)
   return iReturnVal;
 }
 
-/**
- * @brief ExecuteProcess
- * Execute a process
- * Overload without param
- * @param fullpath      Full path to the executable
- * @return size_t       Return code, 0 for success
- */
 size_t ExecuteProcess(std::wstring fullpath)
 {
   // Return value, 0 on success

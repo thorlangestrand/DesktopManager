@@ -20,7 +20,10 @@ DIRERR MainWindow::removeCommandDirectory(QString hash)
     HRESULT hr = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &path);
 
     CoTaskMemFree(path);
-    if (!SUCCEEDED(hr)) return DIRERR::LOOKUPFAILED;
+    if (!SUCCEEDED(hr))
+    {
+        return DIRERR::LOOKUPFAILED;
+    }
 
 
     std::string workablePath = utf8_encode(path);
@@ -36,7 +39,10 @@ DIRERR MainWindow::removeCommandDirectory(QString hash)
 
     bool removed = fs::remove_all(dirId);
 
-    if (!removed) return DIRERR::REMOVEFAILED;
+    if (!removed)
+    {
+        return DIRERR::REMOVEFAILED;
+    }
 
     return DIRERR::NONE;
 }

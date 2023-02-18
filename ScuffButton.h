@@ -1,11 +1,11 @@
 #ifndef SCUFFBUTTON_H
 #define SCUFFBUTTON_H
+
 #include <QPushButton>
 #include <QEvent>
 #include <QDebug>
 
-// This is to avoid recursive inclusion but I honestly
-// don't know why it works
+/// Forward declaration is black magic
 struct Command;
 class ScuffButton : public QPushButton
 {
@@ -15,7 +15,6 @@ public:
     ~ScuffButton() {};
 public:
     Command* cmd = nullptr;
-    void updateCum();
 };
 
 #endif // SCUFFBUTTON_H

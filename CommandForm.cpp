@@ -211,8 +211,6 @@ CommandForm::CommandForm(const QString& title, MainWindow* parent, Command* _cmd
 
 
     uiStorage.push_back({ paramLabel, paramEdit, paramButton });
-    //uiStorage.push_back({cmdNameLabel, cmdNameEdit, cmdNameButton});
-    //uiStorage.push_back({ executableLabel, executableEdit });
     uiStorage.push_back({ webLabel, webEdit });
 
     // Ok, Cancel

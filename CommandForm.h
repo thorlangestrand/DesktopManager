@@ -62,7 +62,6 @@ private:
     // Buttons for file explorer
     QPushButton* iconButton;
     QPushButton* paramButton;
-   //QPushButton* cmdNameButton;
 
     // Delete button, used for edit prompt
     QPushButton* deleteButton;
