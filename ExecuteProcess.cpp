@@ -159,6 +159,5 @@ size_t ExecuteProcess(std::wstring fullpath)
       iReturnVal = 1;
   }
 
-  qDebug() << sHandle;
   return iReturnVal;
 }

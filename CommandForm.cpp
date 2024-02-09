@@ -12,7 +12,9 @@ void CommandForm::iconButtonFile()
     // The tr function is a translate function. This means that depending on language environment the word Icons should be
     // translated to the appropriate word in whatever language
     QString fileName = QFileDialog::getOpenFileName(this, "Icon", "C:\\Users\\admin\\Desktop\\PC\\art\\Icons", tr("Icons (*.png *.ico *.jpg"));
-    iconEdit->setText(fileName);
+    if (!fileName.isEmpty()) {
+        iconEdit->setText(fileName);
+    }
 }
 
 /**
@@ -22,29 +24,41 @@ void CommandForm::iconButtonFile()
  */
 void CommandForm::paramButtonFile()
 {
-    LPWSTR path = NULL;
+    std::string workablePath = "";
 
-    // Result of folder path, 0 if no err
-    HRESULT hr = SHGetKnownFolderPath(FOLDERID_Profile, 0, NULL, &path);
-    if (!SUCCEEDED(hr))
-    {
-        QMessageBox msg;
-        msg.setText("Error, user directory could not be located");
-        msg.exec();
-        return;
+    // If the command window already has a param
+    // try using that as the starting point for editing location
+    // instead of default
+    QString paramEditText = paramEdit->text();
+    if (!paramEditText.isEmpty()) {
+        qsizetype t = paramEditText.lastIndexOf("\\");
+
+        workablePath = paramEditText.mid(0, t).toStdString();
+    }
+    else {
+
+        LPWSTR path = NULL;
+
+        // Result of folder path, 0 if no err
+        HRESULT hr = SHGetKnownFolderPath(FOLDERID_Profile, 0, NULL, &path);
+        if (!SUCCEEDED(hr))
+        {
+            QMessageBox msg;
+            msg.setText("Error, user directory could not be located");
+            msg.exec();
+            return;
+        }
+
+        CoTaskMemFree(path);
+        workablePath = utf8_encode(path);
     }
 
-    CoTaskMemFree(path);
-    std::string workablePath = utf8_encode(path);
 
-
-
-
-    QString fileName;
+    QString fileName = "";
     switch(cmdType)
     {
     case CommandType::CMD : {
-        fileName = QFileDialog::getOpenFileName(this, "Command", QString::fromStdString("C:\\"), tr("Executables (*.exe *.msi *.bat *.cmd *.ps1)"));
+        fileName = QFileDialog::getOpenFileName(this, "Command", QString::fromStdString(workablePath), tr("Executables (*.exe *.msi *.bat *.cmd *.ps1)"));
         break;
     }
     case CommandType::EXPLORER: {
@@ -60,7 +74,11 @@ void CommandForm::paramButtonFile()
     }
     }
 
-    paramEdit->setText(fileName);
+    // If file window is closed before it's submitted
+    // then fileName will remain ""
+    if (!fileName.isEmpty()) {
+        paramEdit->setText(fileName);
+    }
 }
 
 
