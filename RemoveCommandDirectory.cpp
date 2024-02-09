@@ -34,8 +34,8 @@ DIRERR MainWindow::removeCommandDirectory(QString hash)
 
     std::string dirId = workablePath + "\\" + folderId.toStdString();
 
-    fs::path file("data.scuff");
-    fs::path fullPath = dirId / file;
+    // fs::path file("data.scuff");
+    // fs::path fullPath = dirId / file;
 
     bool removed = fs::remove_all(dirId);
 

@@ -203,7 +203,7 @@ void MainWindow::setupButtons()
 
 
 
-        //pb->resize(1, pb->height());
+        // pb->resize(1, pb->height());
         // On pb emit QPushButton::pressed execute lambda function
         // given param pb where pb->cmd->run is called
         // Holy shit i get it
@@ -262,7 +262,10 @@ void MainWindow::buttonResponseEditCommand(int i)
 void MainWindow::buttonResponseEditCommand()
 {
     Command* cmd = MainWindow::currentMatch();
-    if (cmd == nullptr) return;
+    if (cmd == nullptr)
+    {
+        return;
+    }
     ui->searchBox->setText("");
     MainWindow::handleMatch();
     currentEditHash = hashCommand(cmd);

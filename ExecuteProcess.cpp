@@ -33,7 +33,9 @@ size_t ExecuteProcessW(std::wstring fullpath, std::wstring param)
   // Gotta allocate memory because CreateProcessW can modify param
   wchar_t* processParam = new wchar_t[param.size() + 1];
   // Check for failed alloc
-  if (processParam == nullptr) return 1;
+  if (processParam == nullptr) {
+      return 1;
+  }
 
   // Copy data from param to buffer
   wcscpy_s(processParam, param.size() + 1, param.c_str());
@@ -121,7 +123,9 @@ size_t ExecuteProcessW(std::wstring fullpath, std::wstring param)
   // Watch process for 1 second, if fail return 1
   DWORD dwExitCode;
   dwExitCode = WaitForSingleObject(piProcessInfo.hProcess, (1000));
-  if (dwExitCode != 0) iReturnVal = 1;
+  if (dwExitCode != 0) {
+      iReturnVal = 1;
+  }
 
   // Free memory
   delete[] processParam;
@@ -142,40 +146,19 @@ size_t ExecuteProcess(std::wstring fullpath)
   // so need to copy data in order to build up full command
   sTempStr = fullpath;
 
+  HINSTANCE sHandle = ShellExecuteW(
+              NULL,
+              L"open",
+              const_cast<LPCWSTR>(fullpath.c_str()),
+              NULL,
+              NULL,
+              SW_SHOWNORMAL
+  );
 
-  // CreateProcess API initialization
-  STARTUPINFOW siStartupInfo = {};
-  PROCESS_INFORMATION piProcessInfo = {};
-
-  // Zero initialize objects
-  //memset(&siStartupInfo, 0, sizeof(STARTUPINFOW));
-  //memset(&piProcessInfo, 0, sizeof(PROCESS_INFORMATION));
-
-  // Size of structure
-  siStartupInfo.cb = sizeof(siStartupInfo);
-
-
-  /**
-   * NOTE:
-   * Can also have the first parameter be NULL
-   */
-  // If failed
-  if (CreateProcessW(const_cast<LPCWSTR>(fullpath.c_str()),
-    NULL, 0, 0, false,
-    CREATE_DEFAULT_ERROR_MODE, 0, 0,
-    &siStartupInfo, &piProcessInfo) == false)
-  {
-    iReturnVal = GetLastError();
+  if (CloseHandle(sHandle) == 0) {
+      iReturnVal = 1;
   }
 
-  // Watch process for 1 second, if fail return 1
-  DWORD dwExitCode;
-  dwExitCode = WaitForSingleObject(piProcessInfo.hProcess, (1000));
-  if (dwExitCode != 0) iReturnVal = 1;
-
-  // Release handles
-  CloseHandle(piProcessInfo.hProcess);
-  CloseHandle(piProcessInfo.hThread);
-
+  qDebug() << sHandle;
   return iReturnVal;
 }

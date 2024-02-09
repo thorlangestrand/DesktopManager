@@ -308,7 +308,7 @@ bool CommandForm::acceptedOutcome()
             return false;
         }
         return true;
-        //return !(paramEdit->text().isEmpty() || !fs::exists(paramEdit->text().toStdString()));
+        // return !(paramEdit->text().isEmpty() || !fs::exists(paramEdit->text().toStdString()));
     }
     case CommandType::EXPLORER: {
         // Given param
