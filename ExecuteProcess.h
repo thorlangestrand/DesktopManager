@@ -7,6 +7,8 @@
 #include <string>
 #include <iostream>
 
+#include "utf8_parse.h"
+
 ///
 /// \brief  ExecuteProcessW
 ///

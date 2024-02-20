@@ -139,25 +139,23 @@ size_t ExecuteProcessW(std::wstring fullpath, std::wstring param)
 
 size_t ExecuteProcess(std::wstring fullpath)
 {
-  // Return value, 0 on success
-  size_t iReturnVal = 0;
-  std::wstring sTempStr = L"";
-  // First param of CreateProcessW has to be the executable on its own,
-  // so need to copy data in order to build up full command
-  sTempStr = fullpath;
+  // Some older games have to be run from the folder they're located in
+  // otherwise some data can fail to load
+  std::wstring basedir = fullpath.substr(0, fullpath.find_last_of('\\'));
 
   HINSTANCE sHandle = ShellExecuteW(
               NULL,
               L"open",
               const_cast<LPCWSTR>(fullpath.c_str()),
               NULL,
-              NULL,
+              const_cast<LPCWSTR>(basedir.c_str()),
               SW_SHOWNORMAL
   );
 
+  // CloseHandle returns 0 on failed close
   if (CloseHandle(sHandle) == 0) {
-      iReturnVal = 1;
+      return 1;
   }
 
-  return iReturnVal;
+  return 0;
 }

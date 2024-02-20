@@ -9,9 +9,12 @@
  */
 void CommandForm::iconButtonFile()
 {
+    // Set the default icons folder to wherever you store your icons
+    const char* iconsFolder = "C:\\Users\\admin\\Desktop\\PC\\art\\Icons";
+
     // The tr function is a translate function. This means that depending on language environment the word Icons should be
     // translated to the appropriate word in whatever language
-    QString fileName = QFileDialog::getOpenFileName(this, "Icon", "C:\\Users\\admin\\Desktop\\PC\\art\\Icons", tr("Icons (*.png *.ico *.jpg"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Icon"), iconsFolder, tr("Icons (*.png *.ico *.jpg"));
     if (!fileName.isEmpty()) {
         iconEdit->setText(fileName);
     }
@@ -33,7 +36,7 @@ void CommandForm::paramButtonFile()
     if (!paramEditText.isEmpty()) {
         qsizetype t = paramEditText.lastIndexOf("\\");
 
-        workablePath = paramEditText.mid(0, t).toStdString();
+        workablePath = paramEditText.sliced(0, t).toStdString();
     }
     else {
 
@@ -58,15 +61,15 @@ void CommandForm::paramButtonFile()
     switch(cmdType)
     {
     case CommandType::CMD : {
-        fileName = QFileDialog::getOpenFileName(this, "Command", QString::fromStdString(workablePath), tr("Executables (*.exe *.msi *.bat *.cmd *.ps1)"));
+        fileName = QFileDialog::getOpenFileName(this, tr("Command"), QString::fromStdString(workablePath), tr("Executables (*.exe *.msi *.bat *.cmd *.ps1)"));
         break;
     }
     case CommandType::EXPLORER: {
-        fileName = QFileDialog::getExistingDirectory(this, "Directory", QString::fromStdString(workablePath));
+        fileName = QFileDialog::getExistingDirectory(this, tr("Directory"), QString::fromStdString(workablePath));
         break;
     }
     case CommandType::SWF: {
-        fileName = QFileDialog::getOpenFileName(this, "Flash File", QString::fromStdString(workablePath), tr("Executables (*.swf)"));
+        fileName = QFileDialog::getOpenFileName(this, tr("Flash File"), QString::fromStdString(workablePath), tr("Flash Files (*.swf)"));
         break;
     }
     default: {
