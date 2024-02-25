@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Create new command on ctrl+n
     QShortcut* newCommand = new QShortcut(QKeySequence("Ctrl+N"), this);
-    QObject::connect(newCommand, &QShortcut::activated, this, [this](){ this->ui->pushButton->click(); });
+    QObject::connect(newCommand, &QShortcut::activated, this, [this](){ this->ui->addCommandPushButton->click(); });
 
     // If command selected unique, edit command, else nothing
     QShortcut* editCommand = new QShortcut(QKeySequence("Ctrl+E"), this);
@@ -437,7 +437,7 @@ void MainWindow::saveCommand(Command* cmd)
  * @see Command
  * @see CommandForm
  */
-void MainWindow::on_pushButton_pressed()
+void MainWindow::on_addCommandPushButton_pressed()
 {
     QString t = "New Command";
     Command* cmd = new Command;
@@ -447,6 +447,13 @@ void MainWindow::on_pushButton_pressed()
     return;
 }
 
+void MainWindow::on_configPushButton_pressed()
+{
+    ConfigForm* cfgFrm = new ConfigForm(this);
+    cfgFrm->resize({700, cfgFrm->height()});
+    cfgFrm->show();
+
+}
 
 
 
@@ -464,3 +471,24 @@ void MainWindow::on_searchBox_textChanged()
     return;
 }
 
+
+void MainWindow::acceptConfigForm(ConfigForm* cfgFrm)
+{
+    globals::swfPath = cfgFrm->flashPlayerPath->text().toStdString();
+    globals::iconsFolder = cfgFrm->iconsFolderPath->text().toStdString();
+
+    // Could call QWidget::hide here but there's no real point
+
+    if (!saveConfig())
+    {
+        Warn("Failed to save config");
+    }
+
+    delete cfgFrm;
+}
+
+
+void MainWindow::rejectConfigForm(ConfigForm* cfgFrm)
+{
+    delete cfgFrm;
+}

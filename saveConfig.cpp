@@ -1,9 +1,7 @@
-#include "initGlobals.h"
+#include "saveConfig.h"
 
-#include <QDebug>
-bool initGlobals()
+bool saveConfig()
 {
-
     LPWSTR path = NULL;
 
     HRESULT hr = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &path);
@@ -50,18 +48,18 @@ bool initGlobals()
     }
 
 
-    std::ifstream in(workablePath + "\\config.scuff");
+    std::ofstream out(workablePath + "\\config.scuff");
 
-    if (!in.is_open())
+    if (!out.is_open())
     {
         Warn("Failed to open config file");
         return false;
     }
 
-    std::getline(in, globals::swfPath);
-    std::getline(in, globals::iconsFolder);
-    in.close();
+    out << globals::swfPath << "\n";
+    out << globals::iconsFolder;
+
+    out.close();
 
     return true;
 }
-

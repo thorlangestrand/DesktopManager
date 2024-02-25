@@ -19,9 +19,11 @@ SOURCES += \
     RemoveCommandDirectory.cpp \
     ScuffButton.cpp \
     addcommandbutton.cpp \
+    configForm.cpp \
     initGlobals.cpp \
     main.cpp \
     mainwindow.cpp \
+    saveConfig.cpp \
     utf8_parse.cpp \
     warn.cpp
 
@@ -34,9 +36,11 @@ HEADERS += \
     HashCommand.h \
     ScuffButton.h \
     addcommandbutton.h \
+    configForm.h \
     globals.h \
     initGlobals.h \
     mainwindow.h \
+    saveConfig.h \
     utf8_parse.h \
     warn.h
 

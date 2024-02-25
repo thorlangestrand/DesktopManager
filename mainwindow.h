@@ -25,6 +25,8 @@
 #include "warn.h"
 #include "DirectoryErrorEnum.h"
 #include "initGlobals.h"
+#include "configForm.h"
+#include "saveConfig.h"
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -46,10 +48,13 @@ private:
     QString currentEditHash = "";
 
 private slots:
-    void on_pushButton_pressed();
-    //void on_pushButton_2_pressed();
+
+    void on_addCommandPushButton_pressed();
+
+    void on_configPushButton_pressed();
 
     void on_searchBox_textChanged();
+
 
 public slots:
     void addCommand(Command* cmd, CommandForm* cmdFrm);
@@ -78,7 +83,10 @@ private:
     // Handle matching (whether command matches search)
     void handleMatch();
 
+
 public:
+    void acceptConfigForm(ConfigForm* cfgFrm);
+    void rejectConfigForm(ConfigForm* cfgFrm);
     void rejectForm(CommandForm* cmdFrm);
 };
 #endif // MAINWINDOW_H

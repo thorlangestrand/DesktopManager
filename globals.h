@@ -5,6 +5,7 @@
 namespace globals
 {
     inline std::string swfPath = "";
+    inline std::string iconsFolder = "";
 }
 
 

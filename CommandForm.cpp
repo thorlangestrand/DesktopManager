@@ -10,7 +10,7 @@
 void CommandForm::iconButtonFile()
 {
     // Set the default icons folder to wherever you store your icons
-    const char* iconsFolder = "C:\\Users\\admin\\Desktop\\PC\\art\\Icons";
+    const char* iconsFolder = globals::iconsFolder.c_str();
 
     // The tr function is a translate function. This means that depending on language environment the word Icons should be
     // translated to the appropriate word in whatever language
