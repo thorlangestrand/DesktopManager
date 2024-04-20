@@ -61,7 +61,7 @@ void CommandForm::paramButtonFile()
     switch(cmdType)
     {
     case CommandType::CMD : {
-        fileName = QFileDialog::getOpenFileName(this, tr("Command"), QString::fromStdString(workablePath), tr("Executables (*.exe *.msi *.bat *.cmd *.ps1)"));
+        fileName = QFileDialog::getOpenFileName(this, tr("Command"), QString::fromStdString(workablePath), tr("Executables (*.exe *.msi *.bat *.cmd *.ps1 *.lnk)"));
         break;
     }
     case CommandType::EXPLORER: {
